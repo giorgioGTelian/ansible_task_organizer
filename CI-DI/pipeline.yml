@@ -1,0 +1,441 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Deploy multiaccount SSM Patch Manager solution
+
+Parameters:
+  CustomerPrefix:
+    Type: String
+    Description: Customer prefix
+  RebootOption:
+    Type: String
+    Description: Reboot after patching
+    Default: NoReboot
+    AllowedValues:
+      - NoReboot
+      - RebootIfNeeded
+  RedhatOSVersion:
+    Type: CommaDelimitedList
+    Description: Red hat Enterprise Linux OS Version
+    Default: RedHatEnterprise8.3
+  WindowsOSVersion:
+    Type: CommaDelimitedList
+    Description: Windows OS Version
+    Default: WindowsServer2019
+  PatchScanScheduleTime:
+    Type: String
+    Description: Patch Scan Schedule Time in CRON syntax
+  PatchInstallScheduleTimeWeek1:
+    Type: String
+    Description: Patch Install Schedule Week1 Time in CRON syntax
+  PatchInstallScheduleTimeWeek2:
+    Type: String
+    Description: Patch Install Schedule Week2 Time in CRON syntax
+  PatchInstallScheduleTimeWeek3:
+    Type: String
+    Description: Patch Install Schedule Week3 Time in CRON syntax
+  PatchInstallScheduleTimeWeek4:
+    Type: String
+    Description: Patch Install Schedule Week4 Time in CRON syntax
+  ApprovalDelay:
+    Type: String
+    Description: Approve delay in days
+    Default: '0'
+  PatchGroupsNoProd:
+    Type: String
+    Description: Patch Group list for no-prod environment
+    Default: ''
+  PatchGroupsProd:
+    Type: String
+    Description: Patch Group list for prod environment
+    Default: ''
+  ADFMainRegion:
+    Type: String
+    Description: ADF main region
+    Default: eu-west-1
+  DeploymentAccountId:
+    Type: String
+    Description: Deployment account ID
+
+Conditions:
+  MainRegion: !Equals
+    - !Ref AWS::Region
+    - !Ref ADFMainRegion
+
+Resources:
+  #######################
+  ### Patch Baselines ###
+  #######################
+
+  # Patch Baseline for Amazon Linux 2
+  PatchManagerAmazonLinux2Baseline:
+    Type: AWS::SSM::PatchBaseline
+    Properties:
+      Name: !Sub ${CustomerPrefix}-ami2-baseline # Adjust for your naming convention
+      Description: Patch Amazon Linux 2 (RHEL7 Based)
+      OperatingSystem: AMAZON_LINUX_2 # Matches version for AMI2
+      PatchGroups:
+        - !Select
+          - 1
+          - !Split
+            - ','
+            - !Ref PatchGroupsProd
+          # Week 3 patches (adjust for preference)
+      ApprovalRules:
+        PatchRules:
+          - PatchFilterGroup:
+              PatchFilters:
+                - Key: PRODUCT
+                  Values:
+                    - '*'
+                    # Target AMI2 packages
+                - Key: CLASSIFICATION
+                  Values:
+                    - Security
+                    - Bugfix
+                    - Enhancement
+                    - Recommended
+                - Key: SEVERITY
+                  Values:
+                    - Critical
+                    - Important
+                    - Medium
+                    - Low
+            ApproveAfterDays: 8
+            ComplianceLevel: CRITICAL
+            EnableNonSecurity: false
+
+  # Patch Baseline for Amazon Linux 2022
+  PatchManagerAmazonLinux2022Baseline:
+    Type: AWS::SSM::PatchBaseline
+    Properties:
+      Name: !Sub ${CustomerPrefix}-ami2022-baseline # Adjust for your naming convention
+      Description: Patch Amazon Linux 2022 (RHEL8 Based)
+      OperatingSystem: AMAZON_LINUX_2022 # Matches version for AMI2022
+      PatchGroups:
+        - !Select
+          - 1
+          - !Split
+            - ','
+            - !Ref PatchGroupsProd
+          # Week 3 patches (adjust for preference)
+      ApprovalRules:
+        PatchRules:
+          - PatchFilterGroup:
+              PatchFilters:
+                - Key: PRODUCT
+                  Values:
+                    - AmazonLinux2022
+                    # Target AMI2022 packages
+                - Key: CLASSIFICATION
+                  Values:
+                    - Security
+                    - Bugfix
+                    - Enhancement
+                    - Recommended
+                - Key: SEVERITY
+                  Values:
+                    - Critical
+                    - Important
+                    - Medium
+                    - Low
+            ApproveAfterDays: 8
+            ComplianceLevel: CRITICAL
+            EnableNonSecurity: false
+
+  # Patch Baseline for Amazon Linux 2023
+  PatchManagerAmazonLinux2023Baseline:
+    Type: AWS::SSM::PatchBaseline
+    Properties:
+      Name: !Sub ${CustomerPrefix}-ami2023-baseline # Adjust for your naming convention
+      Description: Patch Amazon Linux 2023 (RHEL9 Based)
+      OperatingSystem: AMAZON_LINUX_2023 # Matches version for AMI2023
+      PatchGroups:
+        - !Select
+          - 1
+          - !Split
+            - ','
+            - !Ref PatchGroupsProd
+          # Week 2 patches (adjust for preference)
+      ApprovalRules:
+        PatchRules:
+          - PatchFilterGroup:
+              PatchFilters:
+                - Key: PRODUCT
+                  Values:
+                    - AmazonLinux2023
+                    # Target AMI2023 packages
+                - Key: CLASSIFICATION
+                  Values:
+                    - Security
+                    - Bugfix
+                    - Enhancement
+                    - Recommended
+                - Key: SEVERITY
+                  Values:
+                    - Critical
+                    - Important
+                    - Medium
+                    - Low
+            ApproveAfterDays: 8
+            ComplianceLevel: CRITICAL
+            EnableNonSecurity: false
+
+  # Patch Baseline for RHEL
+  PatchManagerRedhatBaseline:
+    Type: AWS::SSM::PatchBaseline
+    Properties:
+      Name: !Sub ${CustomerPrefix}-redhat-baseline
+      Description: Patch Red Hat OS
+      OperatingSystem: REDHAT_ENTERPRISE_LINUX
+      PatchGroups:
+        - !Select
+          - 0
+          - !Split
+            - ','
+            - !Ref PatchGroupsProd
+          # prodWeek1
+        # - !Select [1, !Split [",", !Ref PatchGroupsProd]] # prodWeek2
+      ApprovalRules:
+        PatchRules:
+          - PatchFilterGroup:
+              PatchFilters:
+                - Key: PRODUCT
+                  Values: !Ref RedhatOSVersion # - !Join ["", ["RedhatEnterpriseLinux", !Ref RedhatOSVersion]]
+                - Key: CLASSIFICATION
+                  Values:
+                    - Security
+                    - Bugfix
+                    - Enhancement
+                    - Recommended
+                - Key: SEVERITY
+                  Values:
+                    - Critical
+                    - Important
+                    - Moderate
+                    - Low
+            ApproveAfterDays: 8
+            ComplianceLevel: CRITICAL
+            EnableNonSecurity: false
+
+  PatchManagerWindowsBaseline:
+    Type: AWS::SSM::PatchBaseline
+    Properties:
+      Name: !Sub ${CustomerPrefix}-windows-baseline
+      Description: Patch Windows OS
+      OperatingSystem: WINDOWS
+      PatchGroups:
+        - !Select
+          - 0
+          - !Split
+            - ','
+            - !Ref PatchGroupsProd
+          # prodWeek1
+        # - !Select [1, !Split [",", !Ref PatchGroupsProd]] # prodWeek2
+      ApprovalRules:
+        PatchRules:
+          - PatchFilterGroup:
+              PatchFilters:
+                - Key: PRODUCT
+                  Values: !Ref WindowsOSVersion # - !Join ["", ["RedhatEnterpriseLinux", !Ref RedhatOSVersion]]
+                - Key: CLASSIFICATION
+                  Values:
+                    - SecurityUpdates
+                    - CriticalUpdates
+                - Key: MSRC_SEVERITY
+                  Values:
+                    - Critical
+                    - Important
+                    - Moderate
+                    - Low
+            ApproveAfterDays: !Ref ApprovalDelay
+            ComplianceLevel: CRITICAL
+            EnableNonSecurity: false
+
+  ###########################
+  ### Maintenance windows ###
+  ###########################
+
+  # Maintenance windows scan (every Sunday of the month) cron(0 23 ? * SUN *)
+  PatchManagerMaintenanceWindowScan:
+    Type: AWS::SSM::MaintenanceWindow
+    Properties:
+      Name: !Sub ${CustomerPrefix}-maintenance-window-scan-prod
+      Description: Scan patch maintenance window
+      AllowUnassociatedTargets: false
+      Cutoff: 4
+      Schedule: !Ref PatchScanScheduleTime
+      Duration: 5
+      ScheduleTimezone: Europe/Rome
+
+  # Maintenance windows install Week 3 (fourth Thursday of the month) cron(0 23 ? * 5#4 *)
+  PatchManagerMaintenanceWindowWeek1Install:
+    Type: AWS::SSM::MaintenanceWindow
+    Properties:
+      Name: !Sub ${CustomerPrefix}-maintenance-window-install-prod-week3
+      Description: Install patch maintenance window - Week 3
+      AllowUnassociatedTargets: false
+      Cutoff: 4
+      Schedule: !Ref PatchInstallScheduleTimeWeek3
+      Duration: 5
+      ScheduleTimezone: Europe/Rome
+
+  # Maintenance windows install Week 4 (first Thursday of the month) cron(0 23 ? * 5#1 *)
+  # PatchManagerMaintenanceWindowWeek2Install:
+  #   Type: "AWS::SSM::MaintenanceWindow"
+  #   Properties:
+  #     Name: !Sub ${CustomerPrefix}-maintenance-window-install-prod-week4
+  #     Description: "Install patch maintenance window - Week 4"
+  #     AllowUnassociatedTargets: false
+  #     Cutoff: 4
+  #     Schedule: !Ref PatchInstallScheduleTimeWeek4
+  #     Duration: 5
+  #     ScheduleTimezone: "Europe/Rome"
+
+  ###################################
+  ### Maintenance windows targets ###
+  ###################################
+  PatchManagerMaintenanceWindowTargetScan:
+    Type: AWS::SSM::MaintenanceWindowTarget
+    Properties:
+      WindowId: !Ref PatchManagerMaintenanceWindowScan
+      ResourceType: INSTANCE
+      Targets:
+        - Key: tag:Patch Group
+          Values:
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !Ref PatchGroupsProd
+              # prodWeek1
+            # - !Select [1, !Split [",", !Ref PatchGroupsProd]] # prodWeek2
+
+  PatchManagerMaintenanceWindowWeek1TargetInstall:
+    Type: AWS::SSM::MaintenanceWindowTarget
+    Properties:
+      WindowId: !Ref PatchManagerMaintenanceWindowWeek1Install
+      ResourceType: INSTANCE
+      Targets:
+        - Key: tag:Patch Group
+          Values:
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !Ref PatchGroupsProd
+              # prodWeek1
+
+  # PatchManagerMaintenanceWindowWeek2TargetInstall:
+  #   Type: "AWS::SSM::MaintenanceWindowTarget"
+  #   Properties:   
+  #     WindowId: !Ref PatchManagerMaintenanceWindowWeek2Install
+  #     ResourceType: INSTANCE
+  #     Targets:
+  #       - Key: tag:Patch Group
+  #         Values:
+  #         - !Select [1, !Split [",", !Ref PatchGroupsProd]] # prodWeek2
+
+  ################################
+  ### Maintenance windows task ###
+  ################################
+
+  PatchManagerRunPatchBaselineScan:
+    Type: AWS::SSM::MaintenanceWindowTask
+    Properties:
+      Name: !Sub ${CustomerPrefix}-run-patch-baseline-scan
+      Priority: 0
+      TaskType: RUN_COMMAND
+      TaskArn: AWS-RunPatchBaseline
+      WindowId: !Ref PatchManagerMaintenanceWindowScan
+      MaxErrors: 50%
+      MaxConcurrency: 10%
+      TaskInvocationParameters:
+        MaintenanceWindowRunCommandParameters:
+          Parameters:
+            Operation:
+              - Scan
+            RebootOption:
+              - NoReboot
+      Targets:
+        - Key: WindowTargetIds
+          Values:
+            - !Ref PatchManagerMaintenanceWindowTargetScan
+
+  PatchManagerRunPatchBaselineWeek1Install:
+    Type: AWS::SSM::MaintenanceWindowTask
+    Properties:
+      Name: !Sub ${CustomerPrefix}-run-patch-baseline-install-week1
+      Priority: 0
+      TaskType: RUN_COMMAND
+      TaskArn: AWS-RunPatchBaseline
+      WindowId: !Ref PatchManagerMaintenanceWindowWeek1Install
+      MaxErrors: 50%
+      MaxConcurrency: 10%
+      TaskInvocationParameters:
+        MaintenanceWindowRunCommandParameters:
+          Parameters:
+            Operation:
+              - Install
+            RebootOption:
+              - !Ref RebootOption
+      Targets:
+        - Key: WindowTargetIds
+          Values:
+            - !Ref PatchManagerMaintenanceWindowWeek1TargetInstall
+
+  # PatchManagerRunPatchBaselineWeek2Install:
+  #   Type: "AWS::SSM::MaintenanceWindowTask"
+  #   Properties:
+  #     Name: !Sub ${CustomerPrefix}-run-patch-baseline-install-week2
+  #     Priority: 0 
+  #     TaskType: RUN_COMMAND
+  #     TaskArn: AWS-RunPatchBaseline
+  #     WindowId: !Ref PatchManagerMaintenanceWindowWeek2Install
+  #     MaxErrors: 50%
+  #     MaxConcurrency: 10%
+  #     TaskInvocationParameters:
+  #       MaintenanceWindowRunCommandParameters:
+  #         Parameters:
+  #           Operation:
+  #             - Install
+  #           RebootOption:
+  #             - !Ref RebootOption
+  #     Targets:
+  #       - Key: WindowTargetIds
+  #         Values:
+  #           - !Ref PatchManagerMaintenanceWindowWeek2TargetInstall
+
+  #########################################
+  ### ADF patch baseline read-only role ###
+  #########################################
+  PatchBaselinePolicy:
+    Condition: MainRegion
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Roles:
+        - !Ref ADFPatchBaselineRole
+      ManagedPolicyName: adf-patchbaseline-policy
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - ssm:Describe*
+              - ssm:Register*
+            Resource:
+              - '*'
+
+  ADFPatchBaselineRole:
+    Condition: MainRegion
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: adf-patchbaseline-role
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS:
+                - !Sub arn:aws:iam::${DeploymentAccountId}:role/adf-codebuild-role
+            Action:
+              - sts:AssumeRole
+      Path: /
