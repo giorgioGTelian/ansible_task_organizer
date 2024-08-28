@@ -1,0 +1,3785 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Deploy 130 Lambda functions with unique names.
+
+PythonRuntime:
+    Type: String
+    Default: python3.8
+    AllowedValues:
+      - python3.8
+      - python3.9
+      - python3.11
+           
+Resources:
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: LambdaExecutionPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: 
+                  - !Sub '- arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*'
+
+  wpdpProdA3Login:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-a3login
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: 'lambdas.zip/lambdas (1)/wpdp-prod-a3login.zip'
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpProdBackupS3:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-backup-s3
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: 'lambdas.zip/lambdas (1)/wpdp-prod-backup-s3.zip'
+      Runtime: 'python3.9'
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpProdBuildLauncher:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-build-launcher
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: 'lambdas.zip/lambdas (1)/wpdp-prod-build-launcher.zip'
+      Runtime: python3.9
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpProdCezanneIntegration:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-cezanne-integration
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: 'lambdas.zip/lambdas (1)/wpdp-prod-cezanne-integration.zip'
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpProdChangeLanguage:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-change-language
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: 'lambdas.zip/lambdas (1)/wpdp-prod-change-language.zip'
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpProdClientApi:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-clientApi
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: 'lambdas.zip/lambdas (1)/wpdp-prod-clientApi.zip'
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:basics:2
+       - arn:aws:lambda:eu-west-1:381492245723:layer:luigi:3
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpProdClientDashboard:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-clientDashboard
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: 'lambdas.zip/lambdas (1)/wpdp-prod-clientDashboard.zip'
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:basics:2
+       - arn:aws:lambda:eu-west-1:381492245723:layer:luigi:3
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddbbackup:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dbbackup
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: 'lambdas.zip/lambdas (1)/wpdp-prod-dbbackup.zip'
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:basics:2
+       - arn:aws:lambda:eu-west-1:381492245723:layer:luigi:3
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddeleteResult:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-delete-result
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: 'lambdas.zip/lambdas (1)/wpdp-prod-delete-result.zip'
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispa2cezanneExtraction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa2-cezanneExtraction
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: 'lambdas.zip/lambdas (1)/wpdp-prod-dispa2-cezanneExtraction.zip'
+      Runtime: python3.11
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:basics:2
+       - arn:aws:lambda:eu-west-1:381492245723:layer:luigi:3
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispa2emailReceiver:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa2-emailReceiver
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: "lambdas.zip/lambdas (1)/wpdp-prod-dispa-emailreceiver.zip"
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:basics:2
+       - arn:aws:lambda:eu-west-1:381492245723:layer:luigi:3
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispa2isoReport:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa2-isoReport
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: 'lambdas.zip/lambdas (1)/wpdp-prod-dispa2-isoReport.zip'
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:basics:2
+       - arn:aws:lambda:eu-west-1:381492245723:layer:luigi:3
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispa2mainpy:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa2-mainpy
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: 'lambdas.zip/lambdas (1)/wpdp-prod-dispa2-mainpy.zip'
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:basics:2
+       - arn:aws:lambda:eu-west-1:381492245723:layer:luigi:3
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispa2mainpyNTE:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa2-mainpyNTE
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: 'lambdas.zip/lambdas (1)/wpdp-prod-dispa2-mainpyNTE.zip'
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:basics:2
+       - arn:aws:lambda:eu-west-1:381492245723:layer:luigi:3
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispa2outputToExternalService:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa2-outputToExternalService
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: 'lambdas.zip/lambdas (1)/wpdp-prod-dispa2-outputToExternalService.zip'
+      Runtime: python3.11
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:basics:2
+       - arn:aws:lambda:eu-west-1:381492245723:layer:luigi:3
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispa2pagheMac:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa2-pagheMac
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: 'lambdas.zip/lambdas (1)/wpdp-prod-dispa2-pagheMac.zip'
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:basics:2
+       - arn:aws:lambda:eu-west-1:381492245723:layer:luigi:3
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispa2pagheMaster:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa2-pagheMaster
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: 'lambdas.zip/lambdas (1)/wpdp-prod-dispa2-pagheMaster.zip'
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:basics:2
+       - arn:aws:lambda:eu-west-1:381492245723:layer:luigi:3
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispa2pagheStudioCentro:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa2-pagheStudioCentro
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: 'lambdas.zip/lambdas (1)/wpdp-prod-dispa2-pagheStudioCentro.zip'
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:basics:2
+       - arn:aws:lambda:eu-west-1:381492245723:layer:luigi:3
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispa2personaldataVariations:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa2-personaldataVariations
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: 'lambdas.zip/lambdas (1)/wpdp-prod-dispa2-personaldataVariations.zip'
+      Runtime: python3.11
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:basics:2
+       - arn:aws:lambda:eu-west-1:381492245723:layer:luigi:3
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpproddispa2sendReceiveSftp:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: "wpdp-prod-dispa2-sendReceiveSftp"
+      Handler: "lambda_function.lambda_handler"
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: "bucket-lambda1"
+        S3Key: "lambdas.zip/lambdas (1)/wpdp-prod-dispa2-sendReceiveSftp.zip"
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:basics:2
+        - arn:aws:lambda:eu-west-1:381492245723:layer:luigi:3
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispa2toAnaZ:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: "wpdp-prod-dispa2-toAnaZ"
+      Handler: "lambda_function.lambda_handler"
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: "bucket-lambda1"
+        S3Key: "lambdas.zip/lambdas (1)/wpdp-prod-dispa2-toAnaZ.zip"
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:basics:2
+       - arn:aws:lambda:eu-west-1:381492245723:layer:luigi:3
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispa2toCezanneA3:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: "wpdp-prod-dispa2-toCezanneA3"
+      Handler: "lambda_function.lambda_handler"
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: "bucket-lambda1"
+        S3Key: "lambdas.zip/lambdas (1)/wpdp-prod-dispa2-toCezanneA3.zip"
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:basics:2
+       - arn:aws:lambda:eu-west-1:381492245723:layer:luigi:3
+       - arn:aws:lambda:eu-west-1:381492245723:layer:a3:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispa2toCezanneMasterNew:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: "wpdp-prod-dispa2-toCezanneMasterNew"
+      Handler: "lambda_function.lambda_handler"
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: "bucket-lambda1"
+        S3Key: "lambdas.zip/lambdas (1)/wpdp-prod-dispa-pagheSaperi.zip"
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispapagheSaperi1:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: "wpdp-prod-dispa-pagheSaperi1"
+      Handler: "lambda_function.lambda_handler"
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: "bucket-lambda1"
+        S3Key: "lambdas.zip/lambdas (1)/wpdp-prod-dispa-pagheSaperi1.zip"
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1	
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispapagheSEAC:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: "wpdp-prod-dispa-pagheSEAC"
+      Handler: "lambda_function.lambda_handler"
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: "bucket-lambda1"
+        S3Key: "lambdas.zip/lambdas (1)/wpdp-prod-dispa-pagheSEAC.zip"
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1	
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispapagheTeam1:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: "wpdp-prod-dispa-pagheTeam1"
+      Handler: "lambda_function.lambda_handler"
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: "bucket-lambda1"
+        S3Key: "lambdas.zip/lambdas (1)/wpdp-prod-dispa-pagheTeam1.zip"
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1	
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispapagheZuc:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: "wpdp-prod-dispa-pagheZuc"
+      Handler: "lambda_function.lambda_handler"
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: "bucket-lambda1"
+        S3Key: "lambdas.zip/lambdas (1)/wpdp-prod-dispa-pagheZuc.zip"
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1	
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispaprocessactionmanage:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: "wpdp-prod-dispa-process-actionmanage"
+      Handler: "lambda_function.lambda_handler"
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: "bucket-lambda1"
+        S3Key: "lambdas.zip/lambdas (1)/wpdp-prod-dispa-process-actionmanage.zip"
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpproddispaprocessdelete:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: "069"
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-process-delete.zip
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispaprocessmanager:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa-process-manager
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-process-manager.zip
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispaprocessstartstop:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa-process-startstop
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-process-startstop.zip
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispaRoaChkGoo:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa-RoaChkGoo
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-RoaChkGoo.zip
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispasave:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa-save
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-save.zip
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispasendNotify:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa-sendNotify
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-sendNotify.zip
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispasendReceiveSftp:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa-sendReceiveSftp
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-sendReceiveSftp.zip
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpproddispaStraTele:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa-StraTele
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-StraTele.zip
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:xlsx-writer:$LATEST
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispatimesheetGiunti:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa-timesheetGiunti
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-timesheetGiunti.zip
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:xlsx-writer:$LATEST
+      Environment:
+        Variables: 
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispatoAna:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa-toAna
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-toAna.zip
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:xlsx-writer:$LATEST
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispatoAnaZ:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa-toAnaZ
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-toAnaZ.zip
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256   
+
+  wpdpproddispa2toCezanneMasterPRE:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa2-toCezanneMasterPRE
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa2-toCezanneMasterPRE.zip
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:basics:2
+       - arn:aws:lambda:eu-west-1:381492245723:layer:luigi:3
+      Environment:
+        Variables:
+          sqlDBdatabase5: wpdp_main
+          sqlDBhost5: wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com
+          sqlDBpassword5: xeTYzyo-9oyphe-r00dp
+          sqlDBuser5: wpdp_prod_dbadm
+          s3Bucket5: output-input-lambda-europe-ir-prd
+          s3FolderInput5: input
+          s3FolderOutput5: output
+          TZ: Europe/Rome
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispa2uploadBillingdata:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa2-uploadBillingdata
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa2-uploadBillingdata.zip
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:basics:2
+       - arn:aws:lambda:eu-west-1:381492245723:layer:luigi:3
+       - arn:aws:lambda:eu-west-1:381492245723:layer:suds:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: wpdp_main
+          sqlDBhost5: wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com
+          sqlDBpassword5: xeTYzyo-9oyphe-r00dp
+          sqlDBuser5: wpdp_prod_dbadm
+          s3Bucket5: output-input-lambda-europe-ir-prd
+          s3FolderInput5: input
+          s3FolderOutput5: output
+          TZ: Europe/Rome
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispa2upRetri:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa2-upRetri
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa2-upRetri.zip
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:basics:2
+       - arn:aws:lambda:eu-west-1:381492245723:layer:luigi:3
+      Environment:
+        Variables:
+          sqlDBdatabase5: wpdp_main
+          sqlDBhost5: wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com
+          sqlDBpassword5: xeTYzyo-9oyphe-r00dp
+          sqlDBuser5: wpdp_prod_dbadm
+          s3Bucket5: output-input-lambda-europe-ir-prd
+          s3FolderInput5: input
+          s3FolderOutput5: output
+          TZ: Europe/Rome
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispa2upRetriA3:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa2-upRetriA3
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa2-upRetriA3.zip
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:basics:2
+       - arn:aws:lambda:eu-west-1:381492245723:layer:luigi:3
+       - arn:aws:lambda:eu-west-1:381492245723:layer:a3:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: wpdp_main
+          sqlDBhost5: wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com
+          sqlDBpassword5: xeTYzyo-9oyphe-r00dp
+          sqlDBuser5: wpdp_prod_dbadm
+          s3Bucket5: output-input-lambda-europe-ir-prd
+          s3FolderInput5: input
+          s3FolderOutput5: output
+          TZ: Europe/Rome
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispa2variationsToZucchetti:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa2-variationsToZucchetti
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa2-variationsToZucchetti.zip
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:basics:2
+       - arn:aws:lambda:eu-west-1:381492245723:layer:luigi:3
+      Environment:
+        Variables:
+          sqlDBdatabase5: wpdp_main
+          sqlDBhost5: wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com
+          sqlDBpassword5: xeTYzyo-9oyphe-r00dp
+          sqlDBuser5: wpdp_prod_dbadm
+          s3Bucket5: output-input-lambda-europe-ir-prd
+          s3FolderInput5: input
+          s3FolderOutput5: output
+          TZ: Europe/Rome
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispaA3Run:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa-A3Run
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: "lambdas.zip/lambdas (1)/wpdp-prod-dispa-A3Run.zip"
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: wpdp_main
+          sqlDBhost5: wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com
+          sqlDBpassword5: xeTYzyo-9oyphe-r00dp
+          sqlDBuser5: wpdp_prod_dbadm
+          s3Bucket5: output-input-lambda-europe-ir-prd
+          s3FolderInput5: input
+          s3FolderOutput5: output
+          TZ: Europe/Rome
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispaadapterftps:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa-adapter-ftps
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-adapter-ftps.zip
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: wpdp_main
+          sqlDBhost5: wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com
+          sqlDBpassword5: xeTYzyo-9oyphe-r00dp
+          sqlDBuser5: wpdp_prod_dbadm
+          s3Bucket5: output-input-lambda-europe-ir-prd
+          s3FolderInput5: input
+          s3FolderOutput5: output
+          TZ: Europe/Rome
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispaAnaGoo:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa-AnaGoo
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-AnaGoo.zip
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: wpdp_main
+          sqlDBhost5: wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com
+          sqlDBpassword5: xeTYzyo-9oyphe-r00dp
+          sqlDBuser5: wpdp_prod_dbadm
+          s3Bucket5: output-input-lambda-europe-ir-prd
+          s3FolderInput5: input
+          s3FolderOutput5: output
+          TZ: Europe/Rome
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispaattachmentdelete:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa-attachment-delete
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: "lambdas.zip/lambdas (1)/wpdp-prod-dispa-attachment-delete.zip"
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: wpdp_main
+          sqlDBhost5: wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com
+          sqlDBpassword5: xeTYzyo-9oyphe-r00dp
+          sqlDBuser5: wpdp_prod_dbadm
+          s3Bucket5: output-input-lambda-europe-ir-prd
+          s3FolderInput5: input
+          s3FolderOutput5: output
+          TZ: Europe/Rome
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispaattachmentgetlink:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa-attachment-getlink
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-attachment-getlink.zip
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: wpdp_main
+          sqlDBhost5: wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com
+          sqlDBpassword5: xeTYzyo-9oyphe-r00dp
+          sqlDBuser5: wpdp_prod_dbadm
+          s3Bucket5: output-input-lambda-europe-ir-prd
+          s3FolderInput5: input
+          s3FolderOutput5: output
+          TZ: Europe/Rome
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispachkGoo:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa-chkGoo
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: "lambdas.zip/lambdas (1)/wpdp-prod-dispa-chkGoo.zip"
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: wpdp_main
+          sqlDBhost5: wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com
+          sqlDBpassword5: xeTYzyo-9oyphe-r00dp
+          sqlDBuser5: wpdp_prod_dbadm
+          s3Bucket5: output-input-lambda-europe-ir-prd
+          s3FolderInput5: input
+          s3FolderOutput5: output
+          TZ: Europe/Rome
+      Timeout: 120
+      MemorySize: 256   
+
+  wpdpproddispaemailreceiver:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa-emailreceiver
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-emailreceiver.zip
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:basics:2
+       - arn:aws:lambda:eu-west-1:381492245723:layer:luigi:3
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispaintProjTel:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa-intProjTel
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-intProjTel.zip
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispaisoReport:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa-isoReport
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-isoReport.zip
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispamainpy:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa-mainpy
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-mainpy.zip
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+      
+  wpdpproddispamakePDF:
+      Type: AWS::Lambda::Function
+      Properties:
+        FunctionName:  wpdp-prod-dispa-makePDF
+        Handler: lambda_function.lambda_handler
+        Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+        Code:
+          S3Bucket: bucket-lambda1
+          S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-makePDF.zip
+        Runtime: python3.9
+        Layers:
+            - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1 
+            - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+            - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+            - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1   
+        Environment:
+          Variables:
+            sqlDBdatabase5: "wpdp_main"
+            sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+            sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+            sqlDBuser5: "wpdp_prod_dbadm"
+            s3Bucket5: "output-input-lambda-europe-ir-prd"
+            s3FolderInput5: "input"
+            s3FolderOutput5: "output"
+            TZ: "Europe/Rome"
+        Timeout: 120
+        MemorySize: 256
+
+      
+  wpdpproddispaMBOGoov:
+      Type: AWS::Lambda::Function
+      Properties:
+        FunctionName: wpdp-prod-dispa-MBOGoo
+        Handler: lambda_function.lambda_handler
+        Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+        Code:
+          S3Bucket: bucket-lambda1
+          S3Key: "lambdas.zip/lambdas (1)/wpdp-prod-dispa-MBOGoo.zip"
+        Runtime: python3.9
+        Layers:
+           - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1 
+           - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+           - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+           - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1   
+        Environment:
+          Variables:
+            sqlDBdatabase5: "wpdp_main"
+            sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+            sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+            sqlDBuser5: "wpdp_prod_dbadm"
+            s3Bucket5: "output-input-lambda-europe-ir-prd"
+            s3FolderInput5: "input"
+            s3FolderOutput5: "output"
+            TZ: "Europe/Rome"
+        Timeout: 120
+        MemorySize: 256
+
+      
+  wpdpproddispanoteGiunti:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-noteGiunti
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-noteGiunti.zip
+      Runtime: python3.9
+      Layers:
+           - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1 
+           - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+           - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+           - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1   
+      Environment:
+          Variables:
+                sqlDBdatabase5: "wpdp_main"
+                sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+                sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+                sqlDBuser5: "wpdp_prod_dbadm"
+                s3Bucket5: "output-input-lambda-europe-ir-prd"
+                s3FolderInput5: "input"
+                s3FolderOutput5: "output"
+                TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+      
+  wpdpproddispanoteMac:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa-noteMac
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-noteMac.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1   
+      Environment:
+        Variables:
+            sqlDBdatabase5: "wpdp_main"
+            sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+            sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+            sqlDBuser5: "wpdp_prod_dbadm"
+            s3Bucket5: "output-input-lambda-europe-ir-prd"
+            s3FolderInput5: "input"
+            s3FolderOutput5: "output"
+            TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+      
+  wpdpproddispanoteTele:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa-noteTele
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-noteTele.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1   
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+      
+  wpdpproddispapaghe:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-paghe
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-paghe.zip
+      Runtime: python3.9
+      Layers:
+         - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1 
+         - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+         - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+         - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1   
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+      
+  wpdpproddispapagheCentro:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-pagheCentro
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-pagheCentro.zip
+      Runtime: python3.9
+      Layers:
+         - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1 
+         - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+         - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+         - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1   
+      Environment:
+       Variables:
+            sqlDBdatabase5: "wpdp_main"
+            sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+            sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+            sqlDBuser5: "wpdp_prod_dbadm"
+            s3Bucket5: "output-input-lambda-europe-ir-prd"
+            s3FolderInput5: "input"
+            s3FolderOutput5: "output"
+            TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+    
+  wpdpproddispapagheCentro1:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa-pagheCentro1
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-pagheCentro1.zip
+      Runtime: python3.9
+      Layers:
+         - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1 
+         - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+         - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+         - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1   
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+      
+  wpdpproddispapagheData:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-pagheData
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-pagheData.zip
+      Runtime: python3.9
+      Layers:
+         - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1 
+         - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+         - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+         - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1   
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+      
+  wpdpproddispapagheEsse:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-pagheEsse
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-pagheEsse.zip
+      Runtime: python3.9
+      Layers:
+         - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1 
+         - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+         - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+         - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1   
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+      
+  wpdpproddispapagheEsse1:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa-pagheEsse1
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-pagheEsse1.zip
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1 
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+       - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1   
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+      
+  wpdpproddispapagheGIOTTO:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-pagheGIOTTO
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-pagheGIOTTO.zip
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1 
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+       - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1   
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpproddispapagheGIS:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-pagheGIS
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-pagheGIS.zip
+      Runtime: python3.9
+      Layers:
+         - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1 
+         - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+         - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+         - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1   
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+      
+  wpdpproddispapagheGIS1:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-pagheGIS1
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-pagheGIS1.zip
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1 
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+       - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1 
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpproddispapagheINAZ:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-pagheINAZ
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-pagheINAZ.zip
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1   
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpproddispapagheJOB1:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-pagheJOB1
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-pagheJOB1.zip
+      Runtime: python3.9
+      Layers:
+       - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1 
+       - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+       - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+       - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1  
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpproddispapagheMac:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-pagheMac
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-pagheMac.zip
+      Runtime: python3.9
+      Layers:
+         - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1 
+         - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+         - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+         - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1 
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+
+  wpdpproddispapagheMaster:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa-pagheMaster
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-pagheMaster.zip
+      Runtime: python3.9
+      Layers:
+          - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+          - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+          - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+          - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1 
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+
+  wpdpproddispapagheMasterEuris:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa-pagheMasterEuris
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-pagheMasterEuris.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1 
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispapagheQuadratura:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa-pagheQuadratura
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-pagheQuadratura.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1  
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+      
+  wpdpproddispapagheSaperi:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-pagheSaperi
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-pagheSaperi.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1 
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+      
+  wpdpproddispapagheSaperi1:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-pagheSaperi1
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-pagheSaperi1.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1  
+      Environment:
+        Variables:
+            sqlDBdatabase5: "wpdp_main"
+            sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+            sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+            sqlDBuser5: "wpdp_prod_dbadm"
+            s3Bucket5: "output-input-lambda-europe-ir-prd"
+            s3FolderInput5: "input"
+            s3FolderOutput5: "output"
+            TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+      
+  wpdpproddispapagheSEAC:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-pagheSEAC
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-pagheSEAC.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1 
+      Environment:
+        Variables:
+            sqlDBdatabase5: "wpdp_main"
+            sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+            sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+            sqlDBuser5: "wpdp_prod_dbadm"
+            s3Bucket5: "output-input-lambda-europe-ir-prd"
+            s3FolderInput5: "input"
+            s3FolderOutput5: "output"
+            TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+      
+  wpdpproddispapagheTeam1:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-pagheTeam1
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-pagheTeam1.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1  
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispapagheZuc:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-pagheZuc
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-pagheZuc.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1   
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+      
+  wpdpproddispaprocessactionmanage:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa-process-actionmanage
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-process-actionmanage.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1  
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispaprocessdelete:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-process-delete
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-process-delete.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1  
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+      
+  wpdpproddispaprocessmanager:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-process-manager
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-process-manager.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1  
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+      
+  wpdpproddispaprocessstartstop:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-process-startstop
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-process-startstop.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1  
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+    
+  wpdpproddispaRoaChkGoo:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-RoaChkGoo
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-RoaChkGoo.zip
+      Runtime: python3.9
+      Layers:
+         - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+         - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1 
+         - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1
+         - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1  
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispasave:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-save
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-save.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1   
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispasendNotify:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-sendNotify
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-sendNotify.zip
+      Runtime: python3.9
+      Layers:
+      - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1   
+      Environment:
+        Variables:
+            sqlDBdatabase5: "wpdp_main"
+            sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+            sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+            sqlDBuser5: "wpdp_prod_dbadm"
+            s3Bucket5: "output-input-lambda-europe-ir-prd"
+            s3FolderInput5: "input"
+            s3FolderOutput5: "output"
+            TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+      
+  wpdpproddispasendReceiveSftp:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-sendReceiveSftp
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-sendReceiveSftp.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1  
+      Environment:
+        Variables:
+            sqlDBdatabase5: "wpdp_main"
+            sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+            sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+            sqlDBuser5: "wpdp_prod_dbadm"
+            s3Bucket5: "output-input-lambda-europe-ir-prd"
+            s3FolderInput5: "input"
+            s3FolderOutput5: "output"
+            TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+      
+  wpdpproddispaStraTele:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-StraTele
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-StraTele.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pysftp:1   
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+      
+  wpdpproddispatimesheetGiunti:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-timesheetGiunti
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-timesheetGiunti.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1 
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+      
+  wpdpproddispatoAna:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-toAna
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-toAna.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1   
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+      
+  wpdpproddispatoAnaZ:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-toAnaZ
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-toAnaZ.zip
+      Runtime: python3.9
+      Layers:
+      - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+      - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1 
+      - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+      - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1 
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+      
+  wpdpproddispatoCezanne:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-toCezanne
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-toCezanne.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1 
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+      
+  wpdpproddispatoCezanneAETNA:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa-toCezanneAETNA
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-toCezanneAETNA.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1 
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+      
+      
+  wpdpproddispatoCezanneMaster: 
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-toCezanneMaster
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-toCezanneMaster.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1  
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpproddispatoCezanneMasterNew:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-toCezanneMasterNew
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-toCezanneMasterNew.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1  
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+      
+      
+  wpdpproddispatoCezanneMedacta :  
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-toCezanneMedacta
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-toCezanneMedacta.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1 
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+      
+  wpdpproddispatoCezanneTXTgroup:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-toCezanneTXTgroup
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-toCezanneTXTgroup.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1 
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  
+  wpdpproddispaupdatequeuedb:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-update-queuedb
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-update-queuedb.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1 
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdppproddispauploadDowloadDeleteS3:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-dispa-uploadDownloadDeleteS3
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: "lambdas.zip/lambdas (1)/wpdp-prod-dispa-uploadDownloadDeleteS3.zip"
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:luigi:3
+        - arn:aws:lambda:eu-west-1:381492245723:layer:basics:2 
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpproddispaupRetri:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-dispa-upRetri
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-dispa-upRetri.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1   
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpproddowloadreport:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-download-report
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-download-report.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1   
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpproderrorsupport:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-error-support
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-error-support.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1  
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodidplist:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-idplist
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-idplist.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1  
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodipsecmedacta:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-ipsec-medacta
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-ipsec-medacta.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodmex:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-mex
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-mex.zip
+      Runtime: python3.9
+      Layers:
+          - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+          - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1 
+          - arn:aws:lambda:eu-west-1:381492245723:layer:openpyxl-xmltodict:1 
+          - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1 
+          - arn:aws:lambda:eu-west-1:381492245723:layer:html2text:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodpdf:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-pdf
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-pdf.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:wkhtmltopdf:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:jinja2:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pdfkit:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodportalinfov2:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-portalinfov2
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-portalinfov2.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1  
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodpowerbiReport:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-powerbiReport
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-powerbiReport.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:basics:2 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:luigi:3 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:msal:1   
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodprocessactor:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-process-actor
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-process-actor.zip
+      Runtime: python3.9
+      Layers:
+      - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+      - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1 
+      Environment:
+        Variables:
+            sqlDBdatabase5: "wpdp_main"
+            sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+            sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+            sqlDBuser5: "wpdp_prod_dbadm"
+            s3Bucket5: "output-input-lambda-europe-ir-prd"
+            s3FolderInput5: "input"
+            s3FolderOutput5: "output"
+            TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodprocessactorsave:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-process-actorsave
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-process-actorsave.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1 
+      Environment:
+        Variables:
+            sqlDBdatabase5: "wpdp_main"
+            sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+            sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+            sqlDBuser5: "wpdp_prod_dbadm"
+            s3Bucket5: "output-input-lambda-europe-ir-prd"
+            s3FolderInput5: "input"
+            s3FolderOutput5: "output"
+            TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodprocessdeleteuserprocess:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-process-deleteuserprocess
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-process-deleteuserprocess.zip
+      Runtime: python3.9
+      Layers:
+      - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+      - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1 
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+        
+
+  wpdpprodprocessexecutewdel:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-process-execute-wdel
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-process-execute-wdel.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1  
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodprocesslistuser:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-process-listuser
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-process-listuser.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1  
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodprocessmanagement:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-process-management
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-process-management.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1   
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodprocesspublish:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-process-publish
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-process-publish.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1  
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodprocessstartsingleuser:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-process-startsingleuser
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-process-startsingleuser.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1   
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+  wpdpprodprocessstop:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-process-stop
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-process-stop.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1  
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodprocessstopsingleuser:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: wpdp-prod-process-stopsingleuser
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-process-stopsingleuser.zip
+      Runtime: python3.9
+      Layers:
+      - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+      - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1 
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodqueue:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-queue
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-queue.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1 
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodqueuereadlogs:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-queue-readlogs
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-queue-readlogs.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1   
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodqueuetrigger:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-queue-trigger
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-queue-trigger.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1  
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodrelevancereport:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-relevance-report
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-relevance-report.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:xlsxwriter:1   
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodS3Trigger:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-S3Trigger
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-S3Trigger.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:basics:2 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:luigi:3 
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodschedawclose:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-scheda-wf-close
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: "lambdas.zip/lambdas (1)/wpdp-prod-scheda-wf-close.zip"
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1  
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodschedawfedit:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-scheda-wf-edit
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-scheda-wf-edit.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1   
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodschedawreject:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-scheda-wf-reject
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-scheda-wf-reject.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1 
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodschedawroute:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-scheda-wf-route
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-scheda-wf-route.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1  
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodschedawsave:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-scheda-wf-save
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-scheda-wf-save.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1  
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodschedawsubmit:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-scheda-wf-submit
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-scheda-wf-submit.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1 
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodsectionscomponents:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-sections-components
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-sections-components.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1  
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodstarreport:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-star-report
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-star-report.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1  
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodstaryourteammember:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-star-your-team-member
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-star-your-team-member.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1   
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodstaryourteammemberreport:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-star-your-team-member-report
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-star-your-team-member-report.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1  
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodstepqueue:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-stepqueue
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-stepqueue.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+        - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1  
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodstepqueuetrigger:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-stepqueue-trigger
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-stepqueue-trigger.zip
+      Runtime: python3.9
+      Layers:
+      - arn:aws:lambda:eu-west-1:381492245723:layer:pymysql:1
+      - arn:aws:lambda:eu-west-1:381492245723:layer:requests:1   
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+
+
+  wpdpprodupdateTable:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-updateTable
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-updateTable.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:basics:2 
+        - arn:aws:lambda:eu-west-1:381492245723:layer:luigi:3 
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256
+      
+  wpdpproduploadDowloadFile:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:  wpdp-prod-uploadDownloadFile
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::381492245723:role/service-role/wpdp-prod-dispa-role
+      Code:
+        S3Bucket: bucket-lambda1
+        S3Key: lambdas.zip/lambdas (1)/wpdp-prod-uploadDownloadFile.zip
+      Runtime: python3.9
+      Layers:
+        - arn:aws:lambda:eu-west-1:381492245723:layer:basics:2
+        - arn:aws:lambda:eu-west-1:381492245723:layer:luigi:3 
+      Environment:
+        Variables:
+          sqlDBdatabase5: "wpdp_main"
+          sqlDBhost5: "wpdp-prod-mysql-11032024.c32emc66e05r.eu-west-1.rds.amazonaws.com"
+          sqlDBpassword5: "xeTYzyo-9oyphe-r00dp"
+          sqlDBuser5: "wpdp_prod_dbadm"
+          s3Bucket5: "output-input-lambda-europe-ir-prd"
+          s3FolderInput5: "input"
+          s3FolderOutput5: "output"
+          TZ: "Europe/Rome"
+      Timeout: 120
+      MemorySize: 256 
